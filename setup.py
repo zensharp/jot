@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Jot",
-    version="0.3.0",
+    version="0.1.0-.pre2",
     author="ZenSharp",
     author_email="andtechstudios@gmail.com",
     description="A CLI for journaling.",
