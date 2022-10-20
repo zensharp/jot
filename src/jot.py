@@ -1,49 +1,48 @@
 #!/usr/bin/python3
 
-import argparse
-import glob
 import os
-import platform
-import re
-import subprocess
-import yaml
+import pendulum
+import sys
 
-# Helper
-## Auxilary Classes
-class Session:
-    def __init__(self):
-        self.verb = config["verb"]
-        self.verbose = config["verbose"]
-        self.dryRun = config["dry_run"]
-
-# Helper functions
-def tryRun(x):
-    if session.dryRun:
-        print(f"[DRY RUN] {x}")
-        return False
-    os.system(x)
-    return True
-
-def listOrSingle(x):
-    if type(x) is list:
-        return x
-    return [x]
-
-def dictGet(dict, key, fallback):
-    if key in dict:
-        return dict[key]
-    return fallback
+exe="$EDITOR %{path}:9999999"
 
 # Begin code
-## Parse configuration
-parser = argparse.ArgumentParser(description="Journal Helper", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("verb", help="The journal operation", nargs='?', default="load")
-parser.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
-parser.add_argument("-n", "--dry-run", action="store_true", help="Dry run mode")
-config = vars(parser.parse_args())
-
 ## Parse environment
-session = Session()
+if "JOT_DIR" in os.environ:
+    jotRoot=os.path.expandvars("$JOT_DIR")
+else:
+    print("Journal directory not set! Please assign environment variable 'JOT_DIR'")
+    exit(1)
+
+## Compute timestamps
+now = pendulum.now()
+week_of_year = f'{now.week_of_year:02}'
+week_of_month = f'{now.week_of_month:02}'
+editStart = pendulum.parse(f"{now.year}-W{week_of_year}")
+editEnd = editStart.add(weeks=1)
+
+## Compute file information
+title = f"{now.year} {now.format('MMMM')} - Week {editStart.week_of_month}"
+timecode = f"{now.year}/{now.month}/W{week_of_month}"
+destPath=f"{jotRoot}/{timecode}.md"
+destDir=os.path.dirname(destPath)
+## Create files (if necessary)
+if not os.path.exists(destPath):
+    if not os.path.exists(destDir):
+        os.system(f"mkdir --parents '{destDir}'")
+    original_stdout = sys.stdout
+    with open(destPath, 'w') as f:
+        sys.stdout = f
+        print("---")
+        print(f"title: '{title}'")
+        print(f"publishDate: {editEnd}")
+        print("---")
+        sys.stdout = original_stdout
+
+## Execute command
+command = exe.replace("%{path}", destPath)
+command = os.path.expandvars(command)
+os.system(command)
 
 # Hack for console_scripts
 def main():
