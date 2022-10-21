@@ -22,7 +22,7 @@ editStart = pendulum.parse(f"{now.year}-W{week_of_year}")
 editEnd = editStart.add(weeks=1)
 
 ## Compute file information
-title = f"{now.year} {now.format('MMMM')} - Week {editStart.week_of_month}"
+title = f"{now.format('MMMM')} Week #{editStart.week_of_month}"
 timecode = f"{now.year}/{now.month}/week{now.week_of_month}"
 destPath=f"{jotRoot}/{timecode}.md"
 destDir=os.path.dirname(destPath)
@@ -36,6 +36,7 @@ if not os.path.exists(destPath):
         sys.stdout = f
         print("---")
         print(f"title: '{title}'")
+        print(f"date: {editStart}")
         print(f"publishDate: {editEnd}")
         print("---")
         sys.stdout = original_stdout
