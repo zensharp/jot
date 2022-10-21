@@ -30,7 +30,6 @@ destDir=os.path.dirname(destPath)
 if not os.path.exists(destPath):
     if not os.path.exists(destDir):
         os.system(f"mkdir --parents '{destDir}'")
-        print("created")
     original_stdout = sys.stdout
     with open(destPath, 'w') as f:
         sys.stdout = f
