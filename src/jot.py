@@ -4,7 +4,7 @@ import os
 import pendulum
 import sys
 
-exe="$EDITOR %{path}:9999999"
+exe="$EDITOR %{path}:2147483647"
 
 # Begin code
 ## Parse environment
