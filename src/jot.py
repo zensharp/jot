@@ -14,6 +14,10 @@ else:
     print("Journal directory not set! Please assign environment variable 'JOT_DIR'")
     exit(1)
 
+if not os.path.exists(jotRoot):
+    print("Journal directory does not exist! Please create before running 'jot'.")
+    exit(1)
+
 ## Compute timestamps
 now = pendulum.now()
 week_of_year = f'{now.week_of_year:02}'
@@ -43,6 +47,7 @@ if not os.path.exists(destPath):
 ## Execute command
 command = exe.replace("%{path}", destPath)
 command = os.path.expandvars(command)
+
 os.getcwd()
 os.system(command)
 
